@@ -3,12 +3,17 @@ import { Switch, Route } from "react-router-dom";
 import Signup from "./Signup";
 import Signin from "./Signin";
 import Exercises from "./Exercises"; // Import the component you want to render
+import Home from './Home';
+
 
 function App() {
   return (
     <div>
       <main>
         <Switch>
+        <Route exact path="/">
+            <Home /> {/* Replace with the desired component */}
+          </Route>
           <Route exact path="/exercises">
             <Exercises />
           </Route>
@@ -19,9 +24,7 @@ function App() {
             <Signup />
           </Route>
           {/* Replace <Home /> with the component you want to render */}
-          <Route exact path="/">
-            <Exercises /> {/* Replace with the desired component */}
-          </Route>
+          
         </Switch>
       </main>
     </div>

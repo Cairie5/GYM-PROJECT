@@ -1,5 +1,6 @@
 import React,{useState, useEffect} from 'react';
 import axios from '../api/axios';
+import {Link} from 'react-router-dom'; 
 import "./Signup.css"
 
 function Signup() {
@@ -26,7 +27,7 @@ function Signup() {
         setIsSubmit(true);
 
         try {
-            const response = await axios.post('/signup', formValues);
+            const response = await axios.post('http://127.0.0.1:5000/Signup', formValues);
             console.log('Form submission successful', response.data);
          } catch (error) {
             console.error('Error submitting form', error);
@@ -137,13 +138,13 @@ function Signup() {
                             />
                         </div>
                         <p>{formErrors.confirmPassword}</p>
-                        <button className="fluid ui button blue">Submit</button>
+                        <button className="fluid ui button blue" onClick={handleSubmit}>Submit</button>
                     </div>
                 </form>
                 <div className="text">
-                    Already have an account? <span><a href='#'>Login</a></span>
+                <span>Already have an account?<Link to={"/Signin"}>Sign In</Link></span>
                 </div>
-            </div>{" "}
+            </div>
         </>
     );
 }

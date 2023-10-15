@@ -11,26 +11,40 @@ function Exercises(){
        }
    useEffect(() => {Main()}, [])
       
-   
+   const handleClick = () => {
+    return (
+      <>
+      
+      </>
+    )
+   }
    
    
    return ( <>
 
-     <div className="container">
-      <div className='crd-group'>
+
+     <div style={{width:"100%", display:"flex",alignItems:"center", justifyContent:"space-between" ,flexFlow:"wrap" }}>
            {exercises.map((exercise ,index ) => (
-             <div key={exercise.id} className="card" style={{ width: "18rem" , display: "flex" , flexDirection: "column" , flexFlow: "wrap"}}>
-                <div className="card-body">
-               <h1 className="card-title">NAME: {exercise.name}</h1>
-               <h2 className="card-text">TYPE: {exercise.type}</h2>
-               <p className="card-text">MUSCLE: {exercise.muscle}</p>
-               <p className="card-text">EQUIPMENT: {exercise.equipment}</p>
-               <p className="card-text">DIFFICULTY: {exercise.difficulty}</p>
-               <button></button>
+             <div className="card text-bg-success mb-3" style={{width: "18rem"}}>
+             <div className="card-header">{exercise.type}</div>
+             <div className="card-body">
+               <h5 className="card-title">{exercise.name}</h5>
+               <p className="card-header">
+               <ul>
+               <li>{exercise.type}</li>
+               <li>{exercise.difficulty}</li>
+                <li>{exercise.muscle}</li>
+               </ul>
+               </p>
+               <button type="button" class="btn btn-light"><a>MORE</a></button>
+
+
              </div>
-           </div>))}
            </div>
-       </div> 
+           
+             ))}
+           
+           </div>
    
    
    </> )

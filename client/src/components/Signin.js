@@ -1,101 +1,110 @@
-import { useRef, useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-
+import React,{useState, useEffect} from 'react';
 import axios from '../api/axios';
-const LOGIN_URL = '/auth';
+import {Link} from 'react-router-dom'; 
+import "./Signin.css"
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
-const Signin = () => {
-    const { setAuth } = useAuth();
-
-    const navigate = useHistory();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
-
-    const userRef = useRef();
-    const errRef = useRef();
-
-    const [user, setUser] = useState('');
-    const [pwd, setPwd] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd])
-
+function Signin() {
+    const history = useHistory();
+    const initialValues = {
+        username: "",
+        password: "",
+    };
+    const [formValues, setFormValues] = useState(initialValues);
+    const [formErrors, setFormErrors] = useState({});
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [token , setToken] = useState("")
+    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues({ ...formValues, [name]: value });
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormErrors(validate(formValues));
+        setIsSubmit(true);
 
         try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({ user, pwd }),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
-            );
-            console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response));
-            const accessToken = response?.data?.accessToken;
-            const roles = response?.data?.roles;
-            setAuth({ user, pwd, roles, accessToken });
-            setUser('');
-            setPwd('');
-            navigate(from, { replace: true });
-        } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
-            } else {
-                setErrMsg('Login Failed');
-            }
-            errRef.current.focus();
+            const response = await axios.post('http://127.0.0.1:5555/signin', formValues);
+            console.log('Form submission successful', response.data);
+            history.push('./home');
+         } catch (error) {
+            console.error('Error submitting form', error);
+         }
+    };
+    
+    useEffect(() => {
+        console.log(formErrors);
+        if (Object.keys(formErrors).length === 0 && isSubmit) {
+            console.log(formValues);
         }
-    }
-
+    }, [formErrors, formValues, isSubmit]);
+    const validate = (values) => {
+        const errors = {};
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+        if (!values.username) {
+            errors.username = "Username is required!";
+        }
+        if (!values.password) {
+            errors.password = "Password is required";
+        } else if (values.password.length < 4) {
+            errors.password = "Password must be more than 4 characters";
+        } else if (values.password.length > 10) {
+            errors.password = "Password cannot exceed more than 10 characters";
+        }
+        
+         
+        return errors;
+    };
+    
     return (
-
-        <section>
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Sign In</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    id="username"
-                    ref={userRef}
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    required
-                />
-
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
-                    required
-                />
-                <button>Sign In</button>
-            </form>
-            <p>
-                Need an Account?<br />
-                <span className="line">
-                    <Link to="/register">Sign Up</Link>
-                </span>
-            </p>
-        </section>
-
-    )
+        <>
+            <div className="bgImg"></div>
+            <div className="container">
+                {Object.keys(formErrors).length === 0 && isSubmit ? (
+                    <div className="ui message success">
+                        Signed in successfully
+                    </div>
+                ) : (
+                    console.log("Entered Details", formValues)
+                )}
+    
+                <form onSubmit={handleSubmit}>
+                    <h1>Sign In</h1>
+                    <div className="ui divider"></div>
+                    <div className="ui form">
+                        <div className="field">
+                            <label>Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder="Choose a username"
+                                value={formValues.username}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <p>{formErrors.username}</p>
+                        <div className="field">
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={formValues.password}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <p>{formErrors.password}</p>
+                       <button className="fluid ui button blue" onClick={handleSubmit}>Submit</button>
+                    </div>
+                </form>
+                <div className="text">
+                <span>Don't have an account?<Link to={"/signup"}>Sign Up</Link></span>
+                </div>
+            </div>
+        </>
+    );
 }
 
-export default Signin
+export default Signin;
