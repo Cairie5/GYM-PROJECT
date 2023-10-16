@@ -54,7 +54,7 @@ function Signup() {
     setIsSubmit(true);
 
     try {
-      const response = await axios.post('http://localhost:5555/signup', {
+      const response = await axios.post('http://localhost:5555/Signup', {
         name: formValues.username,
         email: formValues.email,
         phone_number: formValues.phoneNumber,
