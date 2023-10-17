@@ -54,7 +54,7 @@ function Signup() {
     setIsSubmit(true);
 
     try {
-      const response = await axios.post('http://localhost:5555/Signup', {
+      const response = await axios.post('https://fitnessapp-zzle.onrender.com/Signup', {
         name: formValues.username,
         email: formValues.email,
         phone_number: formValues.phoneNumber,
